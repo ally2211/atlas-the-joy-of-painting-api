@@ -1,10 +1,10 @@
 drop table if exists EpisodeDates;
-
-create table EpisodeDates(
-    IDRow integer,
-    Title text,
-    datePublish text,
-    notes text
+drop table if exists episodedates;
+create table episodedates(
+    IDRow Int Primary Key,
+    Title Text,
+    datePublish Text,
+    notes Text
 );
 
 COPY EpisodeDates(IDRow, Title, datePublish, notes) 

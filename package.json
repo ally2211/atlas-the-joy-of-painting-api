@@ -1,19 +1,23 @@
 {
   "name": "atlas-the-joy-of-painting-api",
   "version": "1.0.0",
-  "description": "---",
-  "main": "index.js",
+  "description": "API and HTML frontend for The Joy of Painting",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "express": "^5.1.0"
+  },
   "devDependencies": {
-    "@types/node": "^22.13.14",
     "nodemon": "^3.1.9",
-    "prisma": "^6.5.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "prisma": "^6.5.0"
   }
 }

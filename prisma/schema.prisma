@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,128 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model colorsused {
+  idrow            Int            @id
+  painting_index   Int?
+  img_src          String?
+  title            String?
+  season           Int?
+  episode          Int?
+  num_colors       Int?
+  youtube_src      String?
+  colors           String[]
+  color_hex        String[]
+  black_gesso      Boolean?
+  bright_red       Boolean?
+  burnt_umber      Boolean?
+  cadmium_yellow   Boolean?
+  dark_sienna      Boolean?
+  indian_red       Boolean?
+  indian_yellow    Boolean?
+  liquid_black     Boolean?
+  liquid_clear     Boolean?
+  midnight_black   Boolean?
+  phthalo_blue     Boolean?
+  phthalo_green    Boolean?
+  prussian_blue    Boolean?
+  sap_green        Boolean?
+  titanium_white   Boolean?
+  van_dyke_brown   Boolean?
+  yellow_ochre     Boolean?
+  alizarin_crimson Boolean?
+  episodedates     episodedates?
+  subjectmatter    subjectmatter?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model episodedates {
+  idrow       Int        @id
+  title       String?
+  datepublish String?
+  notes       String?
+  colorsused  colorsused @relation(fields: [idrow], references: [idrow], onDelete: NoAction, onUpdate: NoAction, map: "fk_episode_id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model subjectmatter {
+  idrow              Int        @id
+  episode            String?
+  title              String?
+  apple_frame        Boolean?
+  aurora_borealis    Boolean?
+  barn               Boolean?
+  beach              Boolean?
+  boat               Boolean?
+  bridge             Boolean?
+  building           Boolean?
+  bushes             Boolean?
+  cabin              Boolean?
+  cactus             Boolean?
+  circle_frame       Boolean?
+  cirrus             Boolean?
+  cliff              Boolean?
+  clouds             Boolean?
+  conifer            Boolean?
+  cumulus            Boolean?
+  deciduous          Boolean?
+  diane_andre        Boolean?
+  dock               Boolean?
+  double_oval_frame  Boolean?
+  farm               Boolean?
+  fence              Boolean?
+  fire               Boolean?
+  florida_frame      Boolean?
+  flowers            Boolean?
+  fog                Boolean?
+  framed             Boolean?
+  grass              Boolean?
+  guest              Boolean?
+  half_circle_frame  Boolean?
+  half_oval_frame    Boolean?
+  hills              Boolean?
+  lake               Boolean?
+  lakes              Boolean?
+  lighthouse         Boolean?
+  mill               Boolean?
+  moon               Boolean?
+  mountain           Boolean?
+  mountains          Boolean?
+  night              Boolean?
+  ocean              Boolean?
+  oval_frame         Boolean?
+  palm_trees         Boolean?
+  path               Boolean?
+  person             Boolean?
+  portrait           Boolean?
+  rectangle_3d_frame Boolean?
+  rectangular_frame  Boolean?
+  river              Boolean?
+  rocks              Boolean?
+  seashell_frame     Boolean?
+  snow               Boolean?
+  snowy_mountain     Boolean?
+  split_frame        Boolean?
+  steve_ross         Boolean?
+  structure          Boolean?
+  sun                Boolean?
+  tomb_frame         Boolean?
+  tree               Boolean?
+  trees              Boolean?
+  triple_frame       Boolean?
+  waterfall          Boolean?
+  waves              Boolean?
+  windmill           Boolean?
+  window_frame       Boolean?
+  winter             Boolean?
+  wood_framed        Boolean?
+  colorsused         colorsused @relation(fields: [idrow], references: [idrow], onDelete: NoAction, onUpdate: NoAction, map: "fk_subject_id")
+
+  @@ignore
 }
