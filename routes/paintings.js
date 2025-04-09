@@ -1,4 +1,3 @@
-// routes/paintings.js
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 
@@ -12,22 +11,27 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ error: 'Color is required' });
   }
 
-  const paintings = await prisma.painting.findMany({
-    where: {
-      colors: {
-        some: {
-          colorName: {
-            name: color
+  try {
+    const paintings = await prisma.painting.findMany({
+      where: {
+        colors: {
+          some: {
+            colorName: {
+              name: color
+            }
           }
         }
+      },
+      select: {
+        title: true
       }
-    },
-    select: {
-      title: true
-    }
-  });
+    });
 
-  res.json(paintings);
+    res.json(paintings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 export default router;

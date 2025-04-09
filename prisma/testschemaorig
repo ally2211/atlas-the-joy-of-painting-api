@@ -7,9 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//
-// ✅ Normalized tables managed by Prisma
-//
 model Painting {
   id         Int         @id
   title      String?
@@ -34,19 +31,12 @@ model ColorUsed {
   colorNameId Int
 }
 
-//
-// 🔒 Existing tables from CSV imports — ignored during migration
-//
-
-model rawcolorsused {
-  idrow Int @id
-
-  @@map("colorsused")
-  @@ignore
-}
-
 model episodedates {
-  idrow Int @id
+  idrow       Int     @id
+  title       String?
+  datepublish String?
+  notes       String?
+  //colorsused  rawcolorsused @relation(fields: [idrow], references: [idrow], onDelete: NoAction, onUpdate: NoAction, map: "fk_episode_id")
 
   @@ignore
 }
@@ -124,5 +114,41 @@ model subjectmatter {
   wood_framed        Boolean?
   //colorsused         rawcolorsused @relation(fields: [idrow], references: [idrow], onDelete: NoAction, onUpdate: NoAction, map: "fk_subject_id")
 
-  @@map("subjectmatter")
+  @@ignore
+}
+
+model rawcolorsused {
+  idrow            Int      @id
+  painting_index   Int?
+  img_src          String?
+  title            String?
+  season           Int?
+  episode          Int?
+  num_colors       Int?
+  youtube_src      String?
+  colors           String[]
+  color_hex        String[]
+  black_gesso      Boolean?
+  bright_red       Boolean?
+  burnt_umber      Boolean?
+  cadmium_yellow   Boolean?
+  dark_sienna      Boolean?
+  indian_red       Boolean?
+  indian_yellow    Boolean?
+  liquid_black     Boolean?
+  liquid_clear     Boolean?
+  midnight_black   Boolean?
+  phthalo_blue     Boolean?
+  phthalo_green    Boolean?
+  prussian_blue    Boolean?
+  sap_green        Boolean?
+  titanium_white   Boolean?
+  van_dyke_brown   Boolean?
+  yellow_ochre     Boolean?
+  alizarin_crimson Boolean?
+  //episodedates     episodedates?
+  //subjectmatter    subjectmatter?
+
+  @@map("colorsused")
+  @@ignore
 }
