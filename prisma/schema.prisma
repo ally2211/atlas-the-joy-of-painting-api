@@ -8,33 +8,6 @@ datasource db {
 }
 
 //
-// ✅ Normalized tables managed by Prisma
-//
-model Painting {
-  id         Int         @id
-  title      String?
-  imgSrc     String?
-  season     Int?
-  episode    Int?
-  youtubeSrc String?
-  colors     ColorUsed[]
-}
-
-model ColorName {
-  id     Int         @id @default(autoincrement())
-  name   String      @unique
-  usedBy ColorUsed[]
-}
-
-model ColorUsed {
-  id          Int       @id @default(autoincrement())
-  painting    Painting  @relation(fields: [paintingId], references: [id])
-  paintingId  Int
-  colorName   ColorName @relation(fields: [colorNameId], references: [id])
-  colorNameId Int
-}
-
-//
 // 🔒 Existing tables from CSV imports — ignored during migration
 //
 
