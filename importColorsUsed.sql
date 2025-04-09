@@ -1,5 +1,7 @@
-drop table if exists ColorsUsed;
+ALTER TABLE subjectmatter DROP CONSTRAINT fk_subject_id;
+ALTER TABLE episodedates DROP CONSTRAINT fk_episode_id;
 drop table if exists colorsused;
+
 create table colorsused(
     IDRow Int Primary Key,
     painting_index Int,
