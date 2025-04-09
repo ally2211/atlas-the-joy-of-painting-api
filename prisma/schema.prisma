@@ -51,7 +51,7 @@ model episodedates {
   @@ignore
 }
 
-model subjectmatter {
+model subjectMatter {
   idrow              Int      @id
   episode            String?
   title              String?
