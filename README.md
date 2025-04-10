@@ -14,7 +14,27 @@ This project creates a database and API for a local public broadcasting station 
 
 ---
 
+### **RUN the API**
+
+npx nodemon server.js
+
+### \*\*\* Endpoints
+
+Filter By Date / Subject / Color Sampling
+• http://localhost:3000/
 ![Alt text](WebFilterPage.jpg?raw=true "Filter All")
+
+Filter By DATE
+• http://localhost:3000/api/paintings/by-date?month=January&year=1983
+![Alt text](FilterByDate.jpg?raw=true "FilterByDate")
+
+Filter By Subject
+• http://localhost:3000/api/paintings/by-subject?subject=mountain
+![Alt text](FilterBySubject.jpg?raw=true "FilterBySubject")
+
+Filter By Color
+• http://localhost:3000/api/paintings/by-color?color=Bright%20Red
+![Alt text](FilterByColor.jpg?raw=true "FilterByColor")
 
 ### **Project Workflow**
 
@@ -22,43 +42,57 @@ This project creates a database and API for a local public broadcasting station 
 
    - Extracts raw data from multiple files (CSV and Excel).
    - Transforms inconsistent fields (e.g., varying quotation styles in titles).
-   - Normalizes and loads the data into a relational database.
+   - I used Regex since this is data that does not change once imported.
+     ![Alt text](Regex.jpg?raw=true "Regex")
 
 2. **Database Design**:
 
    - Implements a schema optimized for episode filtering and relationships between data points (e.g., subject matter, color palette).
+   - Use Scripts to import csv files into postgres database
+   - sudo -u postgres psql joyofpainting< /home/atlas-the-joy-of-painting-api/importEpisodeDates.sql
+   - sudo -u postgres psql joyofpainting< /home/atlas-the-joy-of-painting-api/importColorsUsed.sql
+   - sudo -u postgres psql joyofpainting< /home/atlas-the-joy-of-painting-api/importSubjectMatter.sql
+   - sudo -u postgres psql joyofpainting< /home/atlas-the-joy-of-painting-api/importscripttoalter.sql
 
-3. **API Development**:
-   - Builds an API using a modern framework to expose endpoints for filtering episodes.
+   After importing csv files and creating tables via script, create schema.prisma
+
+   - npx prisma db pull
+     ![Alt text](createmodels.jpg?raw=true "dbpull")
+
+   - npx prisma generate
+     This command generates the Prisma Client — a type-safe database client that you can use in your Node.js app to query your database using JavaScript/TypeScript.
+
+   - Scripts that test filtering.
+     - example: node scripts/filterByColors.js
+
+## ✅ Tech Stack Overview
+
+- **PostgreSQL** – database to store painting and episode metadata
+- **Prisma** – type-safe ORM for querying PostgreSQL
+- **Node.js** – JavaScript runtime
+- **Express.js** – API server for handling routes and filters
+- **HTML/CSS/JavaScript** – simple static frontend UI (no React)
 
 ---
 
-### **Requirements**
+## 🧩 Key Dependencies
 
-#### **Software Dependencies**
+- `@prisma/client` – generated database client for querying models
+- `prisma` – CLI for managing schema and generating types
+- `express` – lightweight server and API routing
+- `nodemon` – auto-restarts the server during development
 
-#### **Install Dependencies**
+## ⚙️ Installation
+
+Install with `pnpm`, `npm`, or `yarn`:
+
+````bash
+# Required dependencies
+pnpm add express @prisma/client
+
+# Dev dependencies
+pnpm add -D prisma nodemon
 
 ```bash
 
-```
-
----
-
-### **Setup**
-
-1. **Prepare the Data**:
-
-   - Place the raw CSV and Excel files in a directory named `data/`.
-
-2. **Configure the Database**:
-
-   - Set up a SQL Server instance.
-   - Update the `DATABASE_URI` in the provided scripts to match your database configuration.
-
-3. **Run the ETL Process**:
-
-   - Use the provided script to clean and load data into the database.
-
-4. **Run the API**:
-   - Start the API server to expose filtering endpoints.
+````
