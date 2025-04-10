@@ -2,16 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>🎨 Filter Episodes</title>
+  <title>🎨 Filter Bob Ross Episodes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      color: #2b4a2d;
+      text-align: center;
+    }
+
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+
+    legend {
+      font-weight: bold;
+      color: #444;
+    }
+
+    label {
+      display: inline-block;
+      margin-right: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    button {
+      background: #2b4a2d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    ul {
+      background: #fff;
+      padding: 1rem;
+      list-style: none;
+      border: 1px solid #ccc;
+    }
+
+    li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Filter Bob Ross Episodes</h1>
+  <h1>🎨 Filter Bob Ross Episodes</h1>
 
   <form id="filterForm">
     <fieldset>
       <legend>Subjects</legend>
       <div id="subjectCheckboxes"></div>
     </fieldset>
+
+    <fieldset>
+      <legend>Colors</legend>
+      <div id="colorCheckboxes"></div>
+    </fieldset>
+
+    <fieldset>
+    <legend>Date Range</legend>
+    <label>
+        Start Year:
+        <input type="number" name="startYear" min="1983" max="1995" />
+    </label>
+    <label>
+        End Year:
+        <input type="number" name="endYear" min="1983" max="1995" />
+    </label>
+    </fieldset>
+
 
     <button type="submit">Search</button>
   </form>
@@ -20,32 +95,63 @@
   <ul id="resultsList"></ul>
 
   <script>
-    const SUBJECTS = ["mountain", "tree", "lake", "beach", "ocean", "snow"]; // <-- replace with your full list
+    const SUBJECTS = [
+      "mountain", "tree", "lake", "beach", "ocean", "snow", "cabin", "sun",
+      "river", "waterfall", "clouds", "barn", "path", "moon", "flowers"
+      // Add more from your DB script
+    ];
 
-    const container = document.getElementById('subjectCheckboxes');
-    SUBJECTS.forEach(subject => {
-      const label = document.createElement('label');
-      label.innerHTML = `<input type="checkbox" name="subjects" value="${subject}"> ${subject}`;
-      container.appendChild(label);
-      container.appendChild(document.createElement('br'));
-    });
+    const COLORS = [
+      "Alizarin Crimson", "Bright Red", "Cadmium Yellow", "Phthalo Green",
+      "Phthalo Blue", "Prussian Blue", "Sap Green", "Titanium White",
+      "Van Dyke Brown", "Yellow Ochre", "Dark Sienna", "Midnight Black"
+      // Add more if needed
+    ];
 
+    // Build checkboxes dynamically
+    function renderCheckboxes(containerId, items, name) {
+      const container = document.getElementById(containerId);
+      items.forEach(value => {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" name="${name}" value="${value}"> ${value}`;
+        container.appendChild(label);
+      });
+    }
+
+    renderCheckboxes("subjectCheckboxes", SUBJECTS, "subjects");
+    renderCheckboxes("colorCheckboxes", COLORS, "colors");
+
+    // Handle form submit
     document.getElementById('filterForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const selectedSubjects = formData.getAll('subjects');
+      const subjects = formData.getAll('subjects');
+      const colors = formData.getAll('colors');
+      const startYear = formData.get("startYear");
+      const endYear = formData.get("endYear");
 
-      const url = `/api/paintings/filter?subjects=${selectedSubjects.join(',')}`;
-      const res = await fetch(url);
-      const episodes = await res.json();
+      const query = new URLSearchParams();
+      if (subjects.length) query.set("subjects", subjects.join(","));
+      if (colors.length) query.set("colors", colors.join(","));
+      if (startYear) query.set("startYear", startYear);
+      if (endYear) query.set("endYear", endYear);
+
+      const res = await fetch(`/api/paintings/filter?${query}`);
+      const data = await res.json();
 
       const list = document.getElementById('resultsList');
-      list.innerHTML = '';
-      episodes.forEach(ep => {
-        const li = document.createElement('li');
-        li.textContent = `${ep.episode} — ${ep.title}`;
-        list.appendChild(li);
-      });
+      list.innerHTML = "";
+
+      if (data.length === 0) {
+        list.innerHTML = "<li>No matching episodes found 😢</li>";
+      } else {
+        data.forEach(ep => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${ep.episode || "Untitled"}:</strong> ${ep.title} <br/>
+            <small><em>${ep.colors?.join(", ") || "No colors"}</em></small>`;
+          list.appendChild(li);
+        });
+      }
     });
   </script>
 </body>

@@ -12,7 +12,9 @@ function parseMonthYear(dateStr) {
 }
 
 router.get('/', async (req, res) => {
-  const { colors, subjects, month, year } = req.query;
+  //const { colors, subjects, month, year } = req.query;
+  const { colors, subjects, startYear, endYear } = req.query;
+
 
   // Turn comma-separated lists into arrays
   const colorList = colors?.split(',') || [];
@@ -49,28 +51,25 @@ router.get('/', async (req, res) => {
       },
     });
 
-    const filtered = results.filter((ep) => {
-      const parsed = parseMonthYear(ep.datepublish);
-      if (month && year) {
-        if (
-          !parsed ||
-          parsed.month.toLowerCase() !== month.toLowerCase() ||
-          parsed.year !== year
-        ) return false;
-      }
+  const filtered = results.filter((ep) => {
+  const parsed = parseMonthYear(ep.datepublish);
+  if (!parsed) return false;
 
-      // Match if any selected color is in the episode's colors
-      const matchesColors =
-        colorList.length === 0 ||
-        colorList.some(color => ep.rawColorsUsed?.colors?.includes(color));
+  // Filter by year range
+  const yearInt = parseInt(parsed.year, 10);
+  if (startYear && yearInt < parseInt(startYear)) return false;
+  if (endYear && yearInt > parseInt(endYear)) return false;
 
-      // Match if any selected subject is true
-      const matchesSubjects =
-        subjectList.length === 0 ||
-        subjectList.some(subject => ep.subjectmatter?.[subject] === true);
+  const matchesColors =
+    colorList.length === 0 ||
+    colorList.some(color => ep.rawColorsUsed?.colors?.includes(color));
 
-      return matchesColors && matchesSubjects;
-    });
+  const matchesSubjects =
+    subjectList.length === 0 ||
+    subjectList.some(subject => ep.subjectmatter?.[subject] === true);
+
+  return matchesColors && matchesSubjects;
+});
 
     const flattened = filtered.map((ep) => ({
       title: ep.title,
