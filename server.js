@@ -1,11 +1,22 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import filter from './routes/filter.js';
 import byDate from './routes/byDate.js';
 import byColor from "./routes/byColor.js"
 import bySubject from "./routes/bySubject.js"
-import filter from './routes/filter.js';
 
 const app = express();
 const PORT = 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from /public
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // ✅ Root route to test quickly
 app.get('/', (req, res) => {
@@ -17,6 +28,8 @@ app.get('/ping', (req, res) => {
   res.send('pong');
 });
 
+
+app.use('/api/paintings/filter', filter);
 // ✅ Mount your real API routes
 app.use('/api/paintings/by-date', byDate);
 app.use('/api/paintings/by-color', byColor);
