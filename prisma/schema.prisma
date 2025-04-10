@@ -12,7 +12,7 @@ datasource db {
 //
 
 model rawColorsUsed {
-  idrow            Int      @id
+  idrow            Int            @id
   painting_index   Int?
   img_src          String?
   title            String?
@@ -20,7 +20,7 @@ model rawColorsUsed {
   episode          Int?
   num_colors       Int?
   youtube_src      String?
-  colors           String[] @db.Text
+  colors           String[]       @db.Text
   color_hex        String[]
   black_gesso      Boolean?
   bright_red       Boolean?
@@ -42,21 +42,25 @@ model rawColorsUsed {
   alizarin_crimson Boolean?
   //episodedates     episodedates?
   //subjectmatter    subjectmatter?
+  episodeDates     episodeDates?  @relation("ColorToEpisode", fields: [idrow], references: [idrow], map: "fk_color_episode")
+  subjectMatter    subjectMatter? @relation("ColorToSubject") // No need to map again here
 
   @@map("colorsused")
 }
 
 model episodeDates {
-  idrow       Int     @id
-  title       String?
-  datepublish String?
-  notes       String?
+  idrow         Int            @id
+  title         String?
+  datepublish   String?
+  notes         String?
+  subjectmatter subjectMatter? @relation("EpisodeToSubject")
+  rawColorsUsed rawColorsUsed? @relation("ColorToEpisode")
 
   @@map("episodedates")
 }
 
 model subjectMatter {
-  idrow              Int      @id
+  idrow              Int            @id
   episode            String?
   title              String?
   apple_frame        Boolean?
@@ -127,6 +131,8 @@ model subjectMatter {
   winter             Boolean?
   wood_framed        Boolean?
   //colorsused         rawcolorsused @relation(fields: [idrow], references: [idrow], onDelete: NoAction, onUpdate: NoAction, map: "fk_subject_id")
+  episodeDates       episodeDates?  @relation("EpisodeToSubject", fields: [idrow], references: [idrow], map: "fk_subject_episode")
+  rawColorsUsed      rawColorsUsed? @relation("ColorToSubject", fields: [idrow], references: [idrow], map: "fk_subject_color")
 
   @@map("subjectmatter")
 }

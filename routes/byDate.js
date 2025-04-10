@@ -30,6 +30,11 @@ router.get('/', async (req, res) => {
       select: {
         title: true,
         datepublish: true,
+        subjectmatter: {
+            select: {
+                episode: true
+            }
+        }
       },
     });
 
@@ -40,7 +45,12 @@ router.get('/', async (req, res) => {
         parsed.month.toLowerCase() === month.toLowerCase() &&
         parsed.year === year
       );
-    });
+    })
+    .map((ep) => ({
+        title: ep.title,
+        datepublish: ep.datepublish,
+        episode: ep.subjectmatter?.episode ?? null,
+      }));
 
     res.json(filtered);
   } catch (err) {
