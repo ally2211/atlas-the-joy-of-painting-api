@@ -1,5 +1,7 @@
 import express from 'express';
-import byDate from './routes/byDate.js'; // This is your working route file
+import byDate from './routes/byDate.js';
+import byColor from "./routes/byColor.js"
+import bySubject from "./routes/bySubject.js"
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +18,8 @@ app.get('/ping', (req, res) => {
 
 // ✅ Mount your real API routes
 app.use('/api/paintings/by-date', byDate);
+app.use('/api/paintings/by-color', byColor);
+app.use('/api/paintings/by-subject', bySubject);
 
 // ✅ Start the server
 app.listen(PORT, () => {
