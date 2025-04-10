@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎨 Filter Episodes</title>
+</head>
+<body>
+  <h1>Filter Bob Ross Episodes</h1>
+
+  <form id="filterForm">
+    <fieldset>
+      <legend>Subjects</legend>
+      <div id="subjectCheckboxes"></div>
+    </fieldset>
+
+    <button type="submit">Search</button>
+  </form>
+
+  <h2>Results:</h2>
+  <ul id="resultsList"></ul>
+
+  <script>
+    const SUBJECTS = ["mountain", "tree", "lake", "beach", "ocean", "snow"]; // <-- replace with your full list
+
+    const container = document.getElementById('subjectCheckboxes');
+    SUBJECTS.forEach(subject => {
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" name="subjects" value="${subject}"> ${subject}`;
+      container.appendChild(label);
+      container.appendChild(document.createElement('br'));
+    });
+
+    document.getElementById('filterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const selectedSubjects = formData.getAll('subjects');
+
+      const url = `/api/paintings/filter?subjects=${selectedSubjects.join(',')}`;
+      const res = await fetch(url);
+      const episodes = await res.json();
+
+      const list = document.getElementById('resultsList');
+      list.innerHTML = '';
+      episodes.forEach(ep => {
+        const li = document.createElement('li');
+        li.textContent = `${ep.episode} — ${ep.title}`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

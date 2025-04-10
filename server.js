@@ -2,6 +2,7 @@ import express from 'express';
 import byDate from './routes/byDate.js';
 import byColor from "./routes/byColor.js"
 import bySubject from "./routes/bySubject.js"
+import filter from './routes/filter.js';
 
 const app = express();
 const PORT = 3000;
@@ -20,6 +21,7 @@ app.get('/ping', (req, res) => {
 app.use('/api/paintings/by-date', byDate);
 app.use('/api/paintings/by-color', byColor);
 app.use('/api/paintings/by-subject', bySubject);
+app.use('/api/paintings/filter', filter);
 
 // ✅ Start the server
 app.listen(PORT, () => {
