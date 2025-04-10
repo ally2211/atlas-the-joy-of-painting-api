@@ -76,8 +76,7 @@ Filter By Color
 - **Node.js** – JavaScript runtime
 - **Express.js** – API server for handling routes and filters
 - **HTML/CSS/JavaScript** – simple static frontend UI (no React)
-
----
+- **pgAdmin 4** – optional GUI for managing PostgreSQL
 
 ## 🧩 Key Dependencies
 
@@ -97,6 +96,24 @@ pnpm add express @prisma/client
 # Dev dependencies
 pnpm add -D prisma nodemon
 
+#  version 5 created problems
+pnpm remove express && pnpm add express@4
+
 ```bash
 
+````
+
+## ⚙️ PostgreSQL Installation
+
+````bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+Switch to Postgres user:  sudo -i -u postgres
+Open the PostgreSQL shell: sudo -u postgres psql
+List all databases: \l
+Connect to a database: \c joyofpainting
+List tables in your current database: \dt
+```bash
 ````
