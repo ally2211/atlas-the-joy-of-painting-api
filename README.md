@@ -63,7 +63,11 @@ Filter By Color
      This command generates the Prisma Client — a type-safe database client that you can use in your Node.js app to query your database using JavaScript/TypeScript.
 
    - Scripts that test filtering.
+
      - example: node scripts/filterByColors.js
+
+   - ERD Diagram
+     ![Alt text](ERDDiagram.jpg?raw=true "ERD Diagram")
 
 ## ✅ Tech Stack Overview
 
