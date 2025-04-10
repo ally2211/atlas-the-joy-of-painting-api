@@ -13,12 +13,27 @@ function parseMonthYear(dateStr) {
 
 router.get('/', async (req, res) => {
   //const { colors, subjects, month, year } = req.query;
-  const { colors, subjects, startYear, endYear } = req.query;
+  //const { colors, subjects, startYear, endYear } = req.query;
+  const { colors, subjects, startMonth, startYear, endMonth, endYear } = req.query;
 
 
   // Turn comma-separated lists into arrays
   const colorList = colors?.split(',') || [];
   const subjectList = subjects?.split(',') || [];
+  const monthNameToIndex = {
+    january: 1,
+    february: 2,
+    march: 3,
+    april: 4,
+    may: 5,
+    june: 6,
+    july: 7,
+    august: 8,
+    september: 9,
+    october: 10,
+    november: 11,
+    december: 12,
+    };
 
   try {
     const results = await prisma.episodeDates.findMany({
@@ -66,10 +81,23 @@ router.get('/', async (req, res) => {
   const parsed = parseMonthYear(ep.datepublish);
   if (!parsed) return false;
 
+
+    const episodeMonthIndex = monthNameToIndex[parsed.month.toLowerCase()];
+    const episodeYear = parseInt(parsed.year, 10);
   // Filter by year range
-  const yearInt = parseInt(parsed.year, 10);
-  if (startYear && yearInt < parseInt(startYear)) return false;
-  if (endYear && yearInt > parseInt(endYear)) return false;
+  // Convert start and end to comparable numbers
+    const start = startMonth && startYear
+    ? parseInt(startYear) * 100 + monthNameToIndex[startMonth.toLowerCase()]
+    : null;
+
+    const end = endMonth && endYear
+    ? parseInt(endYear) * 100 + monthNameToIndex[endMonth.toLowerCase()]
+    : null;
+
+    const episodeValue = episodeYear * 100 + episodeMonthIndex;
+
+    if (start && episodeValue < start) return false;
+    if (end && episodeValue > end) return false;
 
   const matchesColors =
     colorList.length === 0 ||
@@ -82,17 +110,25 @@ router.get('/', async (req, res) => {
   return matchesColors && matchesSubjects;
 });
 
-    const flattened = filtered.map((ep) => ({
-      title: ep.title,
-      datepublish: ep.datepublish,
-      episode: ep.subjectmatter?.episode ?? null,
-      season: ep.rawColorsUsed?.season ?? null,
-      youtube_src: ep.rawColorsUsed?.youtube_src ?? null,
-      colors: ep.rawColorsUsed?.colors ?? [],
-      subject: Object.entries(ep.subjectmatter || {})
-        .filter(([key, value]) => typeof value === 'boolean' && value === true)
-        .reduce((acc, [key]) => ({ ...acc, [key]: true }), {})
-    }));
+
+    const flattened = filtered.map((ep) => {
+    const { subjectmatter } = ep;
+
+    const subjects = Object.entries(subjectmatter || {})
+        .filter(([key, value]) => typeof value === 'boolean' && value)
+        .map(([key]) => key);
+
+    return {
+        title: ep.title,
+        episode: subjectmatter?.episode ?? null,
+        datepublish: ep.datepublish ?? null,
+        season: ep.rawColorsUsed?.season ?? null,
+        youtube_src: ep.rawColorsUsed?.youtube_src ?? null,
+        colors: ep.rawColorsUsed?.colors ?? [],
+        subjects, // ✅ now an array like ["mountain", "lake"]
+    };
+    });
+
 
     res.json(flattened);
   } catch (err) {

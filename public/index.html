@@ -59,6 +59,11 @@
     li:last-child {
       border-bottom: none;
     }
+    small {
+        color: #555;
+        display: block;
+        margin-top: 0.2rem;
+        }
   </style>
 </head>
 <body>
@@ -75,17 +80,55 @@
       <div id="colorCheckboxes"></div>
     </fieldset>
 
-    <fieldset>
-    <legend>Date Range</legend>
-    <label>
-        Start Year:
-        <input type="number" name="startYear" min="1983" max="1995" />
-    </label>
-    <label>
-        End Year:
-        <input type="number" name="endYear" min="1983" max="1995" />
-    </label>
-    </fieldset>
+<fieldset>
+  <legend>Date Range</legend>
+  <label>
+    Start Month:
+    <select name="startMonth">
+      <option value="">--</option>
+      <option>January</option>
+      <option>February</option>
+      <option>March</option>
+      <option>April</option>
+      <option>May</option>
+      <option>June</option>
+      <option>July</option>
+      <option>August</option>
+      <option>September</option>
+      <option>October</option>
+      <option>November</option>
+      <option>December</option>
+    </select>
+  </label>
+  <label>
+    Start Year:
+    <input type="number" name="startYear" min="1983" max="1995" />
+  </label>
+  <br />
+  <label>
+    End Month:
+    <select name="endMonth">
+      <option value="">--</option>
+      <option>January</option>
+      <option>February</option>
+      <option>March</option>
+      <option>April</option>
+      <option>May</option>
+      <option>June</option>
+      <option>July</option>
+      <option>August</option>
+      <option>September</option>
+      <option>October</option>
+      <option>November</option>
+      <option>December</option>
+    </select>
+  </label>
+  <label>
+    End Year:
+    <input type="number" name="endYear" min="1983" max="1995" />
+  </label>
+</fieldset>
+
 
 
     <button type="submit">Search</button>
@@ -94,21 +137,19 @@
   <h2>Results:</h2>
   <ul id="resultsList"></ul>
 
-  <script>
+ <script>
+  window.onload = () => {
     const SUBJECTS = [
       "mountain", "tree", "lake", "beach", "ocean", "snow", "cabin", "sun",
       "river", "waterfall", "clouds", "barn", "path", "moon", "flowers"
-      // Add more from your DB script
     ];
 
     const COLORS = [
       "Alizarin Crimson", "Bright Red", "Cadmium Yellow", "Phthalo Green",
       "Phthalo Blue", "Prussian Blue", "Sap Green", "Titanium White",
       "Van Dyke Brown", "Yellow Ochre", "Dark Sienna", "Midnight Black"
-      // Add more if needed
     ];
 
-    // Build checkboxes dynamically
     function renderCheckboxes(containerId, items, name) {
       const container = document.getElementById(containerId);
       items.forEach(value => {
@@ -127,12 +168,16 @@
       const formData = new FormData(e.target);
       const subjects = formData.getAll('subjects');
       const colors = formData.getAll('colors');
+      const startMonth = formData.get("startMonth");
       const startYear = formData.get("startYear");
+      const endMonth = formData.get("endMonth");
       const endYear = formData.get("endYear");
 
       const query = new URLSearchParams();
       if (subjects.length) query.set("subjects", subjects.join(","));
       if (colors.length) query.set("colors", colors.join(","));
+      if (startMonth && startYear) query.set("startMonth", startMonth);
+      if (endMonth && endYear) query.set("endMonth", endMonth);
       if (startYear) query.set("startYear", startYear);
       if (endYear) query.set("endYear", endYear);
 
@@ -147,12 +192,18 @@
       } else {
         data.forEach(ep => {
           const li = document.createElement('li');
-          li.innerHTML = `<strong>${ep.episode || "Untitled"}:</strong> ${ep.title} <br/>
-            <small><em>${ep.colors?.join(", ") || "No colors"}</em></small>`;
+          li.innerHTML = `
+            <strong>${ep.episode || "Untitled"}:</strong> ${ep.title}<br/>
+            <small><strong>Date:</strong> ${ep.datepublish || "Unknown"}</small>
+            <small><strong>Colors:</strong> ${ep.colors.join(", ") || "None"}</small>
+            <small><strong>Subjects:</strong> ${ep.subjects?.join(", ") || "None"}</small>
+          `;
           list.appendChild(li);
         });
       }
     });
-  </script>
+  };
+</script>
+
 </body>
 </html>
